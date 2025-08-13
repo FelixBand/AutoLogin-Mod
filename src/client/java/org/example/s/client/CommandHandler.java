@@ -9,6 +9,12 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.command.CommandRegistryAccess;
@@ -23,6 +29,16 @@ public class CommandHandler {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             registerCommands(dispatcher, null, null);
         });
+
+        // Auto-run /al on join -- Addition by FelixBand on GitHub
+        ClientPlayConnectionEvents.JOIN.register(
+            (ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) -> {
+                // Only run in multiplayer
+                if (client.getCurrentServerEntry() != null) {
+                    client.execute(() -> client.getNetworkHandler().sendChatCommand("al"));
+                }
+            }
+        );
     }
 
     public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher,
