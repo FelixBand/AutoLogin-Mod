@@ -1,8 +1,8 @@
-package client.org.example.s.client;
+package org.example.s.client;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 
 public class AutoLoginOnJoin {
 
@@ -10,8 +10,8 @@ public class AutoLoginOnJoin {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc.player != null) {
-                // Automatically send the /al command when joining
-                mc.player.sendChatMessage("/al");
+                // Send the /al command as chat
+                mc.player.sendMessage(Text.of("/al"), false);
             }
         });
     }
