@@ -1,4 +1,5 @@
-# AutoLogin Mod
+# AutoLogin Mod - My fork
+# This fork adds running /autologin upon joining a server
 A simple mod for automatically entering passwords on servers
 
 This mod gives you the opportunity NOT to enter your password every time you are asked to do so. In the mod interface, you can add/remove a password for each server.
