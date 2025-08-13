@@ -24,6 +24,28 @@ import org.example.s.PasswordGenerator;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
+public class AutoLoginJoinHandler {
+    private static boolean alreadySent = false;
+
+    public static void register() {
+        // Reset flag when disconnecting
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            alreadySent = false;
+        });
+
+        // Run on join
+        ClientPlayConnectionEvents.JOIN.register(
+            (ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) -> {
+                if (!alreadySent && client.getCurrentServerEntry() != null) {
+                    alreadySent = true;
+                    client.execute(() -> client.getNetworkHandler().sendChatCommand("al"));
+                }
+            }
+        );
+    }
+}
+
+
 public class CommandHandler {
     public static void init() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
