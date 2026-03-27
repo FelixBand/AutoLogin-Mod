@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.13.6'
+    id 'net.fabricmc.fabric-loom' version '1.15.5' // The new 2026 standard
     id 'maven-publish'
     id "dev.kikugie.stonecutter"
 }
@@ -74,18 +74,28 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-//    modImplementation "com.terraformersmc:modmenu:16.0.0-rc.2"
-//    modImplementation "me.shedaniel.cloth:cloth-config-fabric:20.0.149"
+    // No mappings for 26.1 (Unobfuscated Era)
+    if (project.minecraft_version != "26.1") {
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    }
 
-    modImplementation name: project.modmenu_version
-    modImplementation name: project.clothconfig_version
+    // Dynamic configuration helper
+    def modConfig = project.minecraft_version == "26.1" ? "implementation" : "modImplementation"
 
-//    modImplementation name: 'modmenu-17.0.0-beta.1'
-//    modImplementation name: 'cloth-config-21.11.153-fabric'
+    // 1. Fabric Loader & API (From Maven)
+    "$modConfig" "net.fabricmc:fabric-loader:${project.loader_version}"
+    "$modConfig" "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // 2. ModMenu & ClothConfig (From your /libs folder)
+    if (project.minecraft_version == "26.1") {
+        // We use files() here so it doesn't try to look for a .pom on Maven
+        implementation files("libs/modmenu-18.0.0-alpha.8.jar")
+        implementation files("libs/cloth-config-26.1.154.jar")
+    } else {
+        modImplementation name: project.modmenu_version
+        modImplementation name: project.clothconfig_version
+    }
 }
 
 processResources {
@@ -101,7 +111,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
