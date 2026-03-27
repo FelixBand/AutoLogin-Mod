@@ -1,0 +1,24 @@
+metadata:
+  project: "1.21"
+  version: "1.21"
+root: "../.."
+branch:
+  id: ""
+  path: "../.."
+active: true
+parameters:
+  constants: {}
+  swaps: {}
+  dependencies: {}
+  excludedExtensions:
+  - "png"
+  - "jpg"
+  - "jpeg"
+  - "webp"
+  - "gif"
+  - "svg"
+  - "mp3"
+  - "wav"
+  - "ogg"
+  - "DS_Store"
+  excludedPaths: []
